@@ -1,0 +1,25 @@
+---
+- hosts: all
+  gather_facts: false
+  become: yes
+  pre_tasks:
+  - name: install python (debian)
+    raw: bash -c "if grep -qi debian /etc/os-release && [ ! -e /usr/bin/python ]; then apt -qqy update; apt install -qqy python python-pip; fi;"
+    register: output
+    changed_when: output.stdout != ""
+    retries: 3
+    delay: 3
+    until: output.rc == 0
+  - name: install python (redhat)
+    raw: bash -c 'if grep -qie maipo -e "CentOS Linux 7" /etc/os-release; then yum install -y python-pip python-setuptools; fi;'
+    register: output
+    changed_when: output.stdout != ""
+    retries: 3
+    delay: 3
+    until: output.rc == 0
+  - pip:
+      name:
+      - setuptools
+      - pyyaml
+      - requests
+      - jsonpath-ng

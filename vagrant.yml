@@ -1,0 +1,15 @@
+providers:
+  libvirt:
+    boxes:
+      bionic: generic/ubuntu1804
+      centos7: generic/centos7
+      oracle7: generic/oracle7
+      rhel7: generic/rhel7
+      xenial: generic/ubuntu1604
+  virtualbox:
+    boxes:
+      bionic: generic/ubuntu18045
+      centos7: generic/centos7
+      oracle7: generic/oracle7
+      rhel7: generic/rhel7
+      xenial: generic/ubuntu1604

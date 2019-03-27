@@ -1,0 +1,36 @@
+---
+- name: add epel repo
+  yum:
+    name: "{{ common_redhat_epel_rpm }}"
+
+- name: perform a yum update
+  yum:
+    name: '*'
+    state: latest
+  when: common_upgrade_base | bool
+
+# Address this dependency issue: https://access.redhat.com/solutions/3701641
+- name: address python-urllib3 bug
+  command: mv /usr/lib/python2.7/site-packages/urllib3/packages/ssl_match_hostname /usr/lib/python2.7/site-packages/urllib3/packages/ssl_match_hostname.backup
+  when: ansible_distribution == 'CentOS'
+
+- name: install baseline dependencies
+  yum:
+    name: "{{ common_rpms }}"
+
+- name: install extra rpms
+  yum:
+    name: "{{ common_extra_rpms }}"
+
+- name: load br_netfilter kernel module
+  modprobe:
+    name: br_netfilter
+    state: present
+
+- name: set sys.net.bridge.bridge-nf-call-iptables
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    sysctl_set: yes
+    state: present
+    reload: yes
